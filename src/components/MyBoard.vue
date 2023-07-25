@@ -24,7 +24,7 @@
           <el-input v-model="findData" placeholder="请输入用户名"></el-input>
         </div>
         <!-- 范围搜索 -->
-        <div v-if="findFunc === 2">
+        <div class="aoe-find" v-if="findFunc === 2">
           <p class="find-text">
             当前查询范围为播放量前
           </p>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
+// import * as echarts from 'echarts'
 import json50000 from './data/data50000.json'
 
 export default {
@@ -86,15 +86,18 @@ export default {
   },
   created () {
     this.allData = json50000.data
-    this.getData = this.allData.slice(0, 10)
+    this.getData = this.allData.slice(0, 20)
   },
   mounted () {
-    this.getChart()
+    // this.getChart()
+    this.getAntvChart()
   },
   methods: {
+    getAntvChart () {},
     getChart () {
       // 基于准备好的dom，初始化echarts实例
-      const myChart = echarts.init(document.getElementById('chart'))
+      // const myChart = echarts.init(document.getElementById('chart'))
+      const myChart = {}
       // 绘制图表
       myChart.setOption({
         title: {
@@ -114,7 +117,7 @@ export default {
           }
         },
         yAxis: {
-          name: '视频数',
+          name: '视频数取对数',
           splitLine: { show: false },
           scale: true
         },
@@ -127,7 +130,7 @@ export default {
             data: this.getData,
             type: 'scatter',
             symbolSize: (data) => {
-              return Math.sqrt(data[2]) / 1e2
+              return Math.sqrt(data[2]) / 1e3
             },
             emphasis: {
               focus: 'self'
@@ -206,15 +209,19 @@ export default {
       display: flex;
       line-height: 40px;
       margin: 10px auto;
-      .find-text {
-        width: 160px;
-      }
-      .input {
-        width: 80px;
-      }
-      .find-out-data {
-        margin-left: 20px;
-        width: 50px;
+      .aoe-find {
+        width: 100%;
+        display: flex;
+        .find-text {
+          width: 160px;
+        }
+        .input {
+          width: 80px;
+        }
+        .find-out-data {
+          margin-left: 20px;
+          width: 50px;
+        }
       }
     }
     .btn {
