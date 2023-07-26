@@ -16,11 +16,11 @@
       </div>
       <div class="find">
         <!-- uid搜索 -->
-        <div v-if="findFunc === 4">
+        <div v-if="findFunc === 0">
           <el-input v-model="findData" placeholder="请输入用户uid"></el-input>
         </div>
         <!-- 用户名搜索 -->
-        <div v-if="findFunc === 3">
+        <div v-if="findFunc === 4">
           <el-input v-model="findData" placeholder="请输入用户名"></el-input>
         </div>
         <!-- 范围搜索 -->
@@ -55,7 +55,7 @@ import json50000 from './data/data50000.json'
 
 // 初始化图表实例
 let chart = {}
-
+let interval = {}
 let table = {}
 
 export default {
@@ -63,10 +63,10 @@ export default {
   data () {
     return {
       input: 1,
-      findFunc: 4,
+      findFunc: 2,
       options: [
-        { value: 4, label: 'uid搜索' },
-        { value: 3, label: '用户名搜索' },
+        { value: 0, label: 'uid搜索' },
+        { value: 4, label: '用户名搜索' },
         { value: 2, label: '范围搜索' }
       ],
       allData: [],
@@ -83,8 +83,7 @@ export default {
           this.input = 49990
         }
         this.getData = this.allData.slice(newVal, newVal + 9)
-        this.getChart()
-        // console.log(newVal)
+        interval.changeData(this.getData)
       }
     },
     findData: {
@@ -96,10 +95,9 @@ export default {
   },
   created () {
     this.allData = json50000
-    this.getData = this.allData.slice(0, 20)
+    this.getData = this.allData.slice(0, 10)
   },
   mounted () {
-    // this.getChart()
     this.getAntvChart()
     this.getTable()
   },
@@ -112,7 +110,7 @@ export default {
         height: 500
       })
       // 声明可视化
-      chart
+      interval = chart
         .point()
         .data({
           value: this.getData
@@ -164,14 +162,30 @@ export default {
     },
     getFindRes () {
       this.getData = []
-      // for (let i = 0; i < this.allData.length; i++) {
-      for (let i = 0; i < 10; i++) {
-        if (this.allData[i][this.findFunc] === this.findData) {
-          this.getData.push(this.allData[i])
-          break
+      if (this.findData === '') {
+        this.getData = this.allData.slice(0, 10)
+      } else if (this.findFunc === 0) {
+        for (let i = 0; i < this.allData.length; i++) {
+          if (this.allData[i].upid === this.findData) {
+            // this.getData.push(this.allData[i])
+            for (let j = 0; j < 10 && i + j < this.allData.length; j++) {
+              this.getData.push(this.allData[i + j])
+            }
+            break
+          }
+        }
+      } else if (this.findFunc === 4) {
+        for (let i = 0; i < this.allData.length; i++) {
+          if (this.allData[i].name === this.findData) {
+            // this.getData.push(this.allData[i])
+            for (let j = 0; j < 10 && i + j < this.allData.length; j++) {
+              this.getData.push(this.allData[i + j])
+            }
+            break
+          }
         }
       }
-      this.getChart()
+      interval.changeData(this.getData)
     },
     debounce (fn, wait) {
       if (this.timer !== null) {
