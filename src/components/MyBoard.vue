@@ -26,12 +26,19 @@
         <!-- 范围搜索 -->
         <div class="aoe-find" v-if="findFunc === 2">
           <p class="find-text">
-            当前查询范围为播放量前
+            当前查询范围为播放量从
           </p>
           <el-input class="input no-number" v-model.number="input" :min="1" :max="49901" :step="1"></el-input>
-          <p class="find-out-data">
-            ~{{ +input + 9 }}
+          <p>
+            开始，每组
           </p>
+          <el-input class="input no-number" v-model.number="scope" :min="1" :max="49901" :step="1"></el-input>
+          <p>
+            个
+          </p>
+          <!-- <p class="find-out-data">
+            ~{{ +input + 9 }}
+          </p> -->
         </div>
       </div>
       <div class="btn">
@@ -64,6 +71,7 @@ export default {
     return {
       input: 1,
       findFunc: 2,
+      scope: 10,
       options: [
         { value: 0, label: 'uid搜索' },
         { value: 4, label: '用户名搜索' },
@@ -79,10 +87,21 @@ export default {
       handler (newVal, oldVal) {
         if (newVal < 1) {
           this.input = 1
-        } else if (newVal > 49990) {
-          this.input = 49990
+        } else if (newVal + this.scope > 50000) {
+          this.input = 50000 - this.scope
         }
-        this.getData = this.allData.slice(newVal, newVal + 9)
+        this.getData = this.allData.slice(newVal, newVal + this.scope)
+        interval.changeData(this.getData)
+      }
+    },
+    scope: {
+      handler (newVal, oldVal) {
+        if (newVal < 1) {
+          this.scope = 1
+        } else if (newVal + this.input > 50000) {
+          this.scope = 50000 - this.input
+        }
+        this.getData = this.allData.slice(newVal, newVal + this.scope)
         interval.changeData(this.getData)
       }
     },
@@ -163,12 +182,11 @@ export default {
     getFindRes () {
       this.getData = []
       if (this.findData === '') {
-        this.getData = this.allData.slice(0, 10)
+        this.getData = this.allData.slice(0, this.scope)
       } else if (this.findFunc === 0) {
         for (let i = 0; i < this.allData.length; i++) {
           if (this.allData[i].upid === this.findData) {
-            // this.getData.push(this.allData[i])
-            for (let j = 0; j < 10 && i + j < this.allData.length; j++) {
+            for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
               this.getData.push(this.allData[i + j])
             }
             break
@@ -177,8 +195,7 @@ export default {
       } else if (this.findFunc === 4) {
         for (let i = 0; i < this.allData.length; i++) {
           if (this.allData[i].name === this.findData) {
-            // this.getData.push(this.allData[i])
-            for (let j = 0; j < 10 && i + j < this.allData.length; j++) {
+            for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
               this.getData.push(this.allData[i + j])
             }
             break
@@ -228,16 +245,17 @@ export default {
       .aoe-find {
         width: 100%;
         display: flex;
-        .find-text {
-          width: 160px;
-        }
+        // .find-text {
+        //   width: 160px;
+        // }
         .input {
+          margin: 0 10px;
           width: 80px;
         }
-        .find-out-data {
-          margin-left: 20px;
-          width: 50px;
-        }
+        // .find-out-data {
+        //   margin-left: 20px;
+        //   width: 50px;
+        // }
       }
     }
     .btn {
