@@ -39,14 +39,24 @@
         <el-button type="primary" plain @click="input += 10">下一组</el-button>
       </div>
       <p class="ins">数据来源：<el-link href="https://space.bilibili.com/2654670" type="primary">狸子</el-link>，技术支持：<el-link href="https://space.bilibili.com/391117803" type="primary">霜序廿</el-link></p>
-      <div id="chart" class="chart"></div>
+      <div class="body">
+        <div ref="s2Table" class="table"></div>
+        <div id="container" class="chart"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 // import * as echarts from 'echarts'
+import { Chart } from '@antv/g2'
+import { TableSheet } from '@antv/s2'
 import json50000 from './data/data50000.json'
+
+// 初始化图表实例
+let chart = {}
+
+let table = {}
 
 export default {
   name: 'MyBoard',
@@ -85,80 +95,72 @@ export default {
     }
   },
   created () {
-    this.allData = json50000.data
+    this.allData = json50000
     this.getData = this.allData.slice(0, 20)
   },
   mounted () {
     // this.getChart()
     this.getAntvChart()
+    this.getTable()
   },
   methods: {
-    getAntvChart () {},
-    getChart () {
-      // 基于准备好的dom，初始化echarts实例
-      // const myChart = echarts.init(document.getElementById('chart'))
-      const myChart = {}
-      // 绘制图表
-      myChart.setOption({
-        title: {
-          text: 'B站前5万up播放量/视频数'
-        },
-        xAxis: {
-          // name: '',
-          splitLine: { show: false },
-          axisLabel: {
-            interval: 0,
-            rotate: 45,
-            margin: 2,
-            textStyle: {
-              fontWeight: 'bolder',
-              color: '#000000'
-            }
-          }
-        },
-        yAxis: {
-          name: '视频数取对数',
-          splitLine: { show: false },
-          scale: true
-        },
-        grid: {
-          left: 80,
-          right: 130
-        },
-        series: [
-          {
-            data: this.getData,
-            type: 'scatter',
-            symbolSize: (data) => {
-              return Math.sqrt(data[2]) / 1e3
-            },
-            emphasis: {
-              focus: 'self'
-            },
-            labelLayout: function () {
-              return {
-                x: myChart.getWidth() - 100,
-                moveOverlap: 'shiftY'
-              }
-            },
-            labelLine: {
-              show: true,
-              length2: 5,
-              lineStyle: {
-                color: '#bbb'
-              }
-            },
-            label: {
-              show: true,
-              formatter: (param) => {
-                return param.data[3]
-              },
-              position: 'right',
-              minMargin: 2
-            }
-          }
-        ]
+    getAntvChart () {
+      chart = new Chart({
+        container: 'container',
+        theme: 'classic',
+        width: 590,
+        height: 500
       })
+      // 声明可视化
+      chart
+        .point()
+        .data({
+          value: this.getData
+        })
+        .encode('x', '播放量')
+        .encode('y', '视频数')
+        .label({
+          text: 'name',
+          transform: [{ type: 'overlapDodgeY' }],
+          style: {
+            stroke: '#fff',
+            textAnchor: 'start',
+            textBaseline: 'middle',
+            dx: 10,
+            position: 'left',
+            fontSize: 10,
+            lineWidth: 2
+          }
+        })
+
+      // 渲染可视化
+      chart.render()
+    },
+    getTable () {
+      table = this.$refs.s2Table
+      // upid":"248380150","播放量":7898400,"视频数":788,"粉丝数":1643,"name":"绿茶浓度过高"
+      const data = {
+        fields: {
+          columns: ['upid', 'name', '播放量', '视频数', '粉丝数']
+        },
+        meta: [
+          {
+            field: 'upid',
+            name: '用户id'
+          },
+          {
+            field: 'name',
+            name: '昵称'
+          }
+        ],
+        data: this.allData
+      }
+      const options = {
+        width: 590,
+        height: 500
+      }
+      const s2 = new TableSheet(table, data, options)
+      s2.render()
     },
     getFindRes () {
       this.getData = []
@@ -191,7 +193,7 @@ export default {
   }
   .board-body {
     width: 50%;
-    min-width: 600px;
+    min-width: 1200px;
     height: 100%;
     margin: 0 auto;
     display: flex;
@@ -232,10 +234,19 @@ export default {
     .ins {
       margin: 10px auto;
     }
-    .chart {
-      width: 100%;
-      height: 500px;
+    .body {
+      display: flex;
+      justify-content: space-between;
+      .chart {
+        width: 590px;
+        height: 500px;
+      }
+      .table {
+        width: 590px;
+        height: 500px;
+      }
     }
+
   }
 }
 
