@@ -177,7 +177,8 @@ export default {
       }
       const options = {
         width: 590,
-        height: 500
+        height: 500,
+        showSeriesNumber: true
       }
       const s2 = new TableSheet(table, data, options)
       s2.render()
@@ -188,20 +189,23 @@ export default {
         this.getData = this.allData.slice(0, this.scope)
       } else if (this.findFunc === 0) {
         for (let i = 0; i < this.allData.length; i++) {
-          if (this.allData[i].upid === this.findData) {
-            for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
-              this.getData.push(this.allData[i + j])
-            }
-            break
+          // if (this.allData[i].upid === this.findData) {
+          if (this.allData[i].upid.indexOf(this.findData) !== -1) {
+            this.getData.push(this.allData[i])
+            // for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
+            //   this.getData.push(this.allData[i + j])
+            // }
+            // break
           }
         }
       } else if (this.findFunc === 4) {
         for (let i = 0; i < this.allData.length; i++) {
-          if (this.allData[i].name === this.findData) {
-            for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
-              this.getData.push(this.allData[i + j])
-            }
-            break
+          if (this.allData[i].name.indexOf(this.findData) !== -1) {
+            this.getData.push(this.allData[i])
+            // for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
+            //   this.getData.push(this.allData[i + j])
+            // }
+            // break
           }
         }
       }
