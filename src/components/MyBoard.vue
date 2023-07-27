@@ -45,10 +45,13 @@
         <el-button type="info" plain @click="input -= 10">上一组</el-button>
         <el-button type="primary" plain @click="input += 10">下一组</el-button>
       </div>
-      <p class="ins">数据来源：<el-link href="https://space.bilibili.com/2654670" type="primary">狸子</el-link>，技术支持：<el-link href="https://space.bilibili.com/391117803" type="primary">霜序廿</el-link></p>
+
       <div class="body">
         <div ref="s2Table" class="table"></div>
         <div id="container" class="chart"></div>
+      </div>
+      <div class="bottom">
+        <p class="ins">数据来源：<el-link href="https://space.bilibili.com/2654670" type="primary">狸子</el-link>，技术支持：<el-link href="https://space.bilibili.com/391117803" type="primary">霜序廿</el-link></p>
       </div>
     </div>
   </div>
@@ -218,13 +221,12 @@ export default {
 <style lang="less" scoped>
 .board-main {
   width: 100%;
-  height: 100%;
+  margin-top: 100px;
   p {
     margin: 0;
   }
   .board-body {
-    width: 50%;
-    min-width: 1200px;
+    width: 80%;
     height: 100%;
     margin: 0 auto;
     display: flex;
@@ -263,12 +265,12 @@ export default {
       display: flex;
       justify-content: center;
     }
-    .ins {
-      margin: 10px auto;
-    }
+
     .body {
+      margin-top: 10px;
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      justify-content: space-around;
       .chart {
         width: 590px;
         height: 500px;
@@ -277,6 +279,12 @@ export default {
         width: 590px;
         height: 500px;
       }
+    }
+    .bottom {
+      margin: 10px auto;
+      // .ins {
+      //   margin: 10px auto;
+      // }
     }
 
   }
