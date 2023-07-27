@@ -42,8 +42,10 @@
         </div>
       </div>
       <div class="btn">
-        <el-button type="info" plain @click="input -= 10">上一组</el-button>
-        <el-button type="primary" plain @click="input += 10">下一组</el-button>
+        <el-button v-if="findFunc === 2" type="info" plain @click="input -= 10">上一组</el-button>
+        <el-button v-else type="info" plain >上一个</el-button>
+        <el-button v-if="findFunc === 2" type="primary" plain @click="input += 10">下一组</el-button>
+        <el-button v-else type="primary" plain >下一个</el-button>
       </div>
 
       <div class="body">
@@ -60,13 +62,14 @@
 <script>
 // import * as echarts from 'echarts'
 import { Chart } from '@antv/g2'
-import { TableSheet } from '@antv/s2'
+// import { TableSheet } from '@antv/s2'
+import { TableSheet, S2Event } from '@antv/s2'
 import json50000 from './data/data50000.json'
 
 // 初始化图表实例
 let chart = {}
 let interval = {}
-let table = {}
+let s2Table = {}
 
 export default {
   name: 'MyBoard',
@@ -82,7 +85,8 @@ export default {
       ],
       allData: [],
       getData: [],
-      findData: ''
+      findData: '',
+      cellHeight: 30
     }
   },
   watch: {
@@ -157,7 +161,7 @@ export default {
       chart.render()
     },
     getTable () {
-      table = this.$refs.s2Table
+      const table = this.$refs.s2Table
       // upid":"248380150","播放量":7898400,"视频数":788,"粉丝数":1643,"name":"绿茶浓度过高"
       const data = {
         fields: {
@@ -180,8 +184,12 @@ export default {
         height: 500,
         showSeriesNumber: true
       }
-      const s2 = new TableSheet(table, data, options)
-      s2.render()
+      s2Table = new TableSheet(table, data, options)
+      s2Table.render()
+      s2Table.on(S2Event.LAYOUT_RESIZE_ROW_HEIGHT, (event) => {
+        this.cellHeight = event.info.resizedHeight
+        console.log(this.cellHeight)
+      })
     },
     getFindRes () {
       this.getData = []
@@ -189,26 +197,23 @@ export default {
         this.getData = this.allData.slice(0, this.scope)
       } else if (this.findFunc === 0) {
         for (let i = 0; i < this.allData.length; i++) {
-          // if (this.allData[i].upid === this.findData) {
           if (this.allData[i].upid.indexOf(this.findData) !== -1) {
             this.getData.push(this.allData[i])
-            // for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
-            //   this.getData.push(this.allData[i + j])
-            // }
-            // break
           }
         }
       } else if (this.findFunc === 4) {
         for (let i = 0; i < this.allData.length; i++) {
           if (this.allData[i].name.indexOf(this.findData) !== -1) {
             this.getData.push(this.allData[i])
-            // for (let j = 0; j < this.scope && i + j < this.allData.length; j++) {
-            //   this.getData.push(this.allData[i + j])
-            // }
-            // break
           }
         }
       }
+      s2Table.updateScrollOffset({
+        offsetY: {
+          value: this.cellHeight * (this.getData[0].num - 1),
+          animate: true
+        }
+      })
       interval.changeData(this.getData)
     },
     debounce (fn, wait) {
