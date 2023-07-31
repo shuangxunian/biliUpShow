@@ -227,8 +227,13 @@ export default {
       }
       const options = {
         width: 590,
-        height: 500
-        // showSeriesNumber: true
+        height: 500,
+        style: {
+          // 列头宽度始终和数值单元格一致
+          cellCfg: {
+            width: 120
+          }
+        }
       }
       s2Table = new TableSheet(table, data, options)
       s2Table.render()
