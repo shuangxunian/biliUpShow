@@ -43,9 +43,9 @@
       </div>
       <div class="btn">
         <el-button v-if="findFunc === 2" type="info" plain @click="input -= 10">上一组</el-button>
-        <el-button v-else type="info" plain >上一个</el-button>
+        <el-button v-else type="info" plain @click="toFind(-1)">上一个</el-button>
         <el-button v-if="findFunc === 2" type="primary" plain @click="input += 10">下一组</el-button>
-        <el-button v-else type="primary" plain >下一个</el-button>
+        <el-button v-else type="primary" plain @click="toFind(1)">下一个</el-button>
       </div>
 
       <div class="body">
@@ -86,7 +86,8 @@ export default {
       allData: [],
       getData: [],
       findData: '',
-      cellHeight: 30
+      cellHeight: 30,
+      nowIndex: 0
     }
   },
   watch: {
@@ -208,9 +209,10 @@ export default {
           }
         }
       }
+      this.nowIndex = 0
       s2Table.updateScrollOffset({
         offsetY: {
-          value: this.cellHeight * (this.getData[0].num - 1),
+          value: this.cellHeight * (this.getData[this.nowIndex].num - 1),
           animate: true
         }
       })
@@ -221,6 +223,17 @@ export default {
         clearTimeout(this.timer)
       }
       this.timer = setTimeout(fn, wait)
+    },
+    toFind (num) {
+      const len = this.getData.length
+      if (this.nowIndex + num < 0 || this.nowIndex + num >= len) return
+      this.nowIndex += num
+      s2Table.updateScrollOffset({
+        offsetY: {
+          value: this.cellHeight * (this.getData[this.nowIndex].num - 1),
+          animate: true
+        }
+      })
     }
   }
 
