@@ -48,6 +48,31 @@
         <el-button v-else type="primary" plain @click="toFind(1)">下一个</el-button>
       </div>
 
+      <!-- <div class="sort-method">
+        <div class="sort-method-body">
+          按照
+          <el-select v-model="sortSelectKey" placeholder="请选择" style="width:100px">
+            <el-option
+              v-for="item in sortKeyOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          进行
+          <el-select v-model="sortSelectMethod" placeholder="请选择" style="width:100px">
+            <el-option
+              v-for="item in sortMethodOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          排序
+        </div>
+
+      </div> -->
+
       <div class="body">
         <div ref="s2Table" class="table"></div>
         <div id="container" class="chart"></div>
@@ -82,6 +107,17 @@ export default {
         { value: 0, label: 'uid搜索' },
         { value: 4, label: '用户名搜索' },
         { value: 2, label: '范围搜索' }
+      ],
+      sortSelectKey: 1,
+      sortKeyOptions: [
+        { value: 1, label: '播放量' },
+        { value: 2, label: '视频数' },
+        { value: 3, label: '粉丝数' }
+      ],
+      sortSelectMethod: 2,
+      sortMethodOptions: [
+        { value: 1, label: '升序' },
+        { value: 2, label: '降序' }
       ],
       allData: [],
       getData: [],
@@ -118,6 +154,16 @@ export default {
         this.debounce(this.getFindRes, 500)
       },
       deep: true
+    },
+    sortSelectKey: {
+      handler (newVal, oldVal) {
+        this.getNewAllData()
+      }
+    },
+    sortSelectMethod: {
+      handler (newVal, oldVal) {
+        this.getNewAllData()
+      }
     }
   },
   created () {
@@ -189,7 +235,6 @@ export default {
       s2Table.render()
       s2Table.on(S2Event.LAYOUT_RESIZE_ROW_HEIGHT, (event) => {
         this.cellHeight = event.info.resizedHeight
-        console.log(this.cellHeight)
       })
     },
     getFindRes () {
@@ -234,7 +279,8 @@ export default {
           animate: true
         }
       })
-    }
+    },
+    getNewAllData () {}
   }
 
 }
@@ -269,23 +315,25 @@ export default {
       .aoe-find {
         width: 100%;
         display: flex;
-        // .find-text {
-        //   width: 160px;
-        // }
         .input {
           margin: 0 10px;
           width: 80px;
         }
-        // .find-out-data {
-        //   margin-left: 20px;
-        //   width: 50px;
-        // }
       }
     }
     .btn {
       // margin-top: 10px;
       display: flex;
       justify-content: center;
+    }
+
+    .sort-method {
+      width: 50%;
+      height: 40px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .body {
@@ -304,9 +352,6 @@ export default {
     }
     .bottom {
       margin: 10px auto;
-      // .ins {
-      //   margin: 10px auto;
-      // }
     }
 
   }
