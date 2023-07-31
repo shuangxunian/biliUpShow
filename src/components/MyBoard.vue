@@ -209,10 +209,9 @@ export default {
     },
     getTable () {
       const table = this.$refs.s2Table
-      // upid":"248380150","播放量":7898400,"视频数":788,"粉丝数":1643,"name":"绿茶浓度过高"
       const data = {
         fields: {
-          columns: ['upid', 'name', '播放量', '视频数', '粉丝数']
+          columns: ['播放量排名', 'upid', 'name', '播放量', '播放时长', '播放时长排名', '视频数', '粉丝数']
         },
         meta: [
           {
@@ -228,8 +227,8 @@ export default {
       }
       const options = {
         width: 590,
-        height: 500,
-        showSeriesNumber: true
+        height: 500
+        // showSeriesNumber: true
       }
       s2Table = new TableSheet(table, data, options)
       s2Table.render()
@@ -257,7 +256,7 @@ export default {
       this.nowIndex = 0
       s2Table.updateScrollOffset({
         offsetY: {
-          value: this.cellHeight * (this.getData[this.nowIndex].num - 1),
+          value: this.cellHeight * (this.getData[this.nowIndex]['播放量排名'] - 1),
           animate: true
         }
       })
@@ -275,7 +274,7 @@ export default {
       this.nowIndex += num
       s2Table.updateScrollOffset({
         offsetY: {
-          value: this.cellHeight * (this.getData[this.nowIndex].num - 1),
+          value: this.cellHeight * (this.getData[this.nowIndex]['播放量排名'] - 1),
           animate: true
         }
       })
