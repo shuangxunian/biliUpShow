@@ -79,6 +79,7 @@
       </div>
       <div class="bottom">
         <p class="ins">数据来源：<el-link href="https://space.bilibili.com/2654670" type="primary">狸子</el-link>，技术支持：<el-link href="https://space.bilibili.com/391117803" type="primary">霜序廿</el-link></p>
+        <p class="remark">数据截止至23年7月</p>
       </div>
     </div>
   </div>
@@ -356,6 +357,11 @@ export default {
     }
     .bottom {
       margin: 10px auto;
+      .ins {}
+      .remark {
+        text-align: center;
+        color: #909399;
+      }
     }
 
   }
