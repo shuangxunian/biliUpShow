@@ -211,7 +211,7 @@ export default {
       const table = this.$refs.s2Table
       const data = {
         fields: {
-          columns: ['播放量排名', 'upid', 'name', '播放量', '播放时长', '播放时长排名', '视频数', '粉丝数']
+          columns: ['upid', 'name', '播放量', '播放量排名', '播放时长', '播放时长排名', '视频数', '粉丝数']
         },
         meta: [
           {
