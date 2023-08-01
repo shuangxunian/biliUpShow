@@ -48,31 +48,6 @@
         <el-button v-else type="primary" plain @click="toFind(1)">下一个</el-button>
       </div>
 
-      <!-- <div class="sort-method">
-        <div class="sort-method-body">
-          按照
-          <el-select v-model="sortSelectKey" placeholder="请选择" style="width:100px">
-            <el-option
-              v-for="item in sortKeyOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          进行
-          <el-select v-model="sortSelectMethod" placeholder="请选择" style="width:100px">
-            <el-option
-              v-for="item in sortMethodOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          排序
-        </div>
-
-      </div> -->
-
       <div class="body">
         <div ref="s2Table" class="table"></div>
         <div id="container" class="chart"></div>
@@ -86,10 +61,9 @@
 </template>
 
 <script>
-// import * as echarts from 'echarts'
 import { Chart } from '@antv/g2'
-// import { TableSheet } from '@antv/s2'
 import { TableSheet, S2Event } from '@antv/s2'
+import { debounce } from 'lodash'
 import json50000 from './data/data50000.json'
 
 // 初始化图表实例
@@ -180,8 +154,7 @@ export default {
       chart = new Chart({
         container: 'container',
         theme: 'classic',
-        width: 590,
-        height: 500
+        autoFit: true
       })
       // 声明可视化
       interval = chart
@@ -191,6 +164,7 @@ export default {
         })
         .encode('x', '播放量')
         .encode('y', '视频数')
+        .axis('x', { labelAutoHide: true, labelAutoRotate: false })
         .label({
           text: 'name',
           transform: [{ type: 'overlapDodgeY' }],
@@ -238,6 +212,16 @@ export default {
       }
       s2Table = new TableSheet(table, data, options)
       s2Table.render()
+      const debounceRender = debounce((width, height) => {
+        s2Table.changeSheetSize(width, height)
+        s2Table.render(false) // 不重新加载数据
+      }, 200)
+
+      const resizeObserver = new ResizeObserver(([entry] = []) => {
+        const [size] = entry.borderBoxSize || []
+        debounceRender(size.inlineSize, size.blockSize)
+      })
+      resizeObserver.observe(table)
       s2Table.on(S2Event.LAYOUT_RESIZE_ROW_HEIGHT, (event) => {
         this.cellHeight = event.info.resizedHeight
       })
@@ -342,16 +326,21 @@ export default {
     }
 
     .body {
-      margin-top: 10px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
       .chart {
-        width: 590px;
+        margin-top: 10px;
+        min-width: 390px;
+        width: 50%;
+        // max-width: 590px;
         height: 500px;
       }
       .table {
-        width: 590px;
+        margin-top: 10px;
+        width: 50%;
+        min-width: 390px;
+        // max-width: 590px;
         height: 500px;
       }
     }
