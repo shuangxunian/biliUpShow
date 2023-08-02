@@ -331,16 +331,14 @@ export default {
       justify-content: space-around;
       .chart {
         margin-top: 10px;
-        min-width: 390px;
-        width: 50%;
-        // max-width: 590px;
+        min-width: 370px;
+        width: 48%;
         height: 500px;
       }
       .table {
         margin-top: 10px;
-        width: 50%;
-        min-width: 390px;
-        // max-width: 590px;
+        width: 48%;
+        min-width: 370px;
         height: 500px;
       }
     }
