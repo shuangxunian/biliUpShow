@@ -76,7 +76,7 @@ export default {
   data () {
     return {
       input: 1,
-      findFunc: 2,
+      findFunc: 4,
       scope: 10,
       options: [
         { value: 0, label: 'uid搜索' },
