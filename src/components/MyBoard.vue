@@ -64,7 +64,7 @@
 import { Chart } from '@antv/g2'
 import { TableSheet, S2Event } from '@antv/s2'
 import { debounce } from 'lodash'
-import json50000 from './data/data50000.json'
+// import json50000 from './data/data50000.json'
 
 // 初始化图表实例
 let chart = {}
@@ -142,20 +142,20 @@ export default {
     }
   },
   created () {
-    // fetch('https://bili-up-show-1300739927.cos.ap-nanjing.myqcloud.com/data50000.json')
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     this.allData = data
-    //     this.getData = this.allData.slice(0, 10)
-    //     this.getAntvChart()
-    //     this.getTable()
-    //   })
-    this.allData = json50000
-    this.getData = this.allData.slice(0, 10)
+    fetch('https://bili-up-show-1300739927.cos.ap-nanjing.myqcloud.com/data50000.json')
+      .then(res => res.json())
+      .then(data => {
+        this.allData = data
+        this.getData = this.allData.slice(0, 10)
+        this.getAntvChart()
+        this.getTable()
+      })
+    // this.allData = json50000
+    // this.getData = this.allData.slice(0, 10)
   },
   mounted () {
-    this.getAntvChart()
-    this.getTable()
+    // this.getAntvChart()
+    // this.getTable()
   },
   methods: {
     getAntvChart () {
